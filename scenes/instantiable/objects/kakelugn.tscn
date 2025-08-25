@@ -1,0 +1,76 @@
+[gd_scene load_steps=14 format=3 uid="uid://b14mldgajjclv"]
+
+[ext_resource type="PackedScene" uid="uid://b0jot2i0t3i7" path="res://assets/models/objects/kakelugn.glb" id="1_vqfq7"]
+[ext_resource type="PackedScene" uid="uid://bwh738xh4u5p" path="res://scenes/instantiable/shaders/fire.tscn" id="2_28bmn"]
+[ext_resource type="Script" uid="uid://d3dlb46ewodpp" path="res://scripts/visuals/flickering_light.gd" id="3_ho01m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oetj7"]
+cull_mode = 2
+
+[sub_resource type="Gradient" id="2"]
+colors = PackedColorArray(0.990326, 0.491468, 0, 1, 1, 0, 0.447059, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ckv3x"]
+gradient = SubResource("2")
+width = 128
+
+[sub_resource type="Curve" id="Curve_3wpvi"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.365019, 0.35828), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6d38h"]
+curve = SubResource("Curve_3wpvi")
+
+[sub_resource type="Curve" id="4"]
+_data = [Vector2(0, 0), 0.0, 3.65289, 0, 0, Vector2(0.556561, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="5"]
+width = 128
+curve = SubResource("4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mdqg6"]
+lifetime_randomness = 0.81
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.5
+initial_velocity_max = 0.5
+gravity = Vector3(0, 0, 0)
+linear_accel_min = 4.0
+linear_accel_max = 4.0
+scale_min = 2.0
+scale_max = 3.0
+scale_curve = SubResource("5")
+color_ramp = SubResource("GradientTexture2D_ckv3x")
+emission_curve = SubResource("CurveTexture_6d38h")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ipank"]
+noise_type = 2
+frequency = 0.3026
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_dyoei"]
+noise = SubResource("FastNoiseLite_ipank")
+
+[node name="kakelugn" instance=ExtResource("1_vqfq7")]
+
+[node name="Cylinder" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_oetj7")
+
+[node name="Fire" parent="." index="1" instance=ExtResource("2_28bmn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.416939, -0.275642)
+process_material = SubResource("ParticleProcessMaterial_mdqg6")
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="Fire" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.463, 0)
+light_color = Color(1, 0.470588, 0, 1)
+shadow_enabled = true
+omni_range = 71.912
+omni_attenuation = -1.051
+script = ExtResource("3_ho01m")
+noise = SubResource("NoiseTexture3D_dyoei")
+
+[node name="Timer" type="Timer" parent="Fire/OmniLight3D2" index="0"]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="Fire/OmniLight3D2/Timer" to="Fire/OmniLight3D2" method="_on_timer_timeout"]

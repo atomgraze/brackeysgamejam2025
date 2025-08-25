@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://bwh738xh4u5p"]
+
+[ext_resource type="Material" uid="uid://dvvurfteukngw" path="res://assets/shaders/fire/StylizedFireShader.tres" id="1_slb1a"]
+[ext_resource type="Material" uid="uid://bmfa8ls4liji0" path="res://assets/shaders/fire/StylizedFireMaterial.tres" id="2_ipank"]
+[ext_resource type="Script" uid="uid://d3dlb46ewodpp" path="res://scripts/visuals/flickering_light.gd" id="3_ipank"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_342rn"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ipank"]
+noise_type = 2
+frequency = 0.3026
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_342rn"]
+noise = SubResource("FastNoiseLite_ipank")
+
+[node name="Fire" type="GPUParticles3D"]
+material_override = ExtResource("1_slb1a")
+amount = 50
+randomness = 0.74
+fixed_fps = 60
+draw_order = 1
+process_material = ExtResource("2_ipank")
+draw_pass_1 = SubResource("QuadMesh_342rn")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 1, 0.447059, 1)
+shadow_enabled = true
+omni_range = 14.525
+omni_attenuation = 0.744
+script = ExtResource("3_ipank")
+noise = SubResource("NoiseTexture3D_342rn")
+
+[node name="Timer" type="Timer" parent="OmniLight3D"]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="OmniLight3D/Timer" to="OmniLight3D" method="_on_timer_timeout"]

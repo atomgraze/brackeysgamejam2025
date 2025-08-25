@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck6e072bmvnno"]
+
+[ext_resource type="PackedScene" uid="uid://cmins7u0oyorr" path="res://assets/models/objects/sconce.glb" id="1_a305t"]
+
+[node name="sconce" instance=ExtResource("1_a305t")]

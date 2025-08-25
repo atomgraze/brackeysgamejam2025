@@ -1,103 +1,363 @@
-[gd_scene load_steps=11 format=3 uid="uid://cen1w8ilrr82j"]
+[gd_scene load_steps=16 format=3 uid="uid://cen1w8ilrr82j"]
 
+[ext_resource type="Environment" uid="uid://cyog4adx4j87x" path="res://assets/shaders/fire/level_environment_dark.tres" id="2_d3p5r"]
+[ext_resource type="Shader" uid="uid://cep7nbpwm6lqo" path="res://assets/shaders/edge_detection.gdshader" id="2_rnj7x"]
 [ext_resource type="Script" uid="uid://d2601umnwbk7v" path="res://scripts/player/player.gd" id="2_w01yt"]
 [ext_resource type="PackedScene" uid="uid://dieumyp8m6u8e" path="res://scenes/instantiable/objects/physics_chain_long.tscn" id="3_08365"]
 [ext_resource type="PackedScene" uid="uid://d1ckrg4f36nvi" path="res://scenes/instantiable/objects/physics_chain.tscn" id="4_v2wtc"]
 [ext_resource type="PackedScene" uid="uid://dgxrqiv345oa7" path="res://scenes/instantiable/objects/hanging_cage.tscn" id="5_80pwh"]
 [ext_resource type="PackedScene" uid="uid://dtnye732xql62" path="res://assets/models/levels/spawn_room.glb" id="6_b64ro"]
 [ext_resource type="PackedScene" uid="uid://bo38mbppayu7s" path="res://scenes/instantiable/objects/physics_chain_short.tscn" id="6_ovj5j"]
+[ext_resource type="PackedScene" uid="uid://b14mldgajjclv" path="res://scenes/instantiable/objects/kakelugn.tscn" id="7_b64ro"]
+[ext_resource type="PackedScene" uid="uid://cmins7u0oyorr" path="res://assets/models/objects/sconce.glb" id="8_qsefr"]
+[ext_resource type="PackedScene" uid="uid://bwh738xh4u5p" path="res://scenes/instantiable/shaders/fire.tscn" id="9_d3p5r"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_08365"]
 
-[sub_resource type="Sky" id="Sky_ovj5j"]
+[sub_resource type="QuadMesh" id="QuadMesh_d3p5r"]
+flip_faces = true
+size = Vector2(2, 2)
 
-[sub_resource type="Environment" id="Environment_v2wtc"]
-background_mode = 2
-sky = SubResource("Sky_ovj5j")
-ssr_enabled = true
-ssao_enabled = true
-ssil_radius = 1.83
-sdfgi_enabled = true
-sdfgi_bounce_feedback = 0.13
-fog_enabled = true
-fog_light_energy = 0.34
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.1102
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n1pfm"]
+render_priority = 0
+shader = ExtResource("2_rnj7x")
+shader_parameter/lightIntensity = 1.25
+shader_parameter/lineAlpha = 0.7
+shader_parameter/useLighting = false
+shader_parameter/lineHighlight = 0.02
+shader_parameter/lineShadow = 0.55
+shader_parameter/minDepthThreshold = 0.001
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_w01yt"]
 size = Vector3(30.5986, 1, 30.5684)
 
 [node name="World" type="Node3D"]
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+texture_filter = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+stretch_shrink = 3
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+size = Vector2i(640, 360)
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.41614, 1.47171, 0)
 script = ExtResource("2_w01yt")
 velocity_drag = 0.1
 movement_speed = 100.0
 air_speed_control = 1.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewportContainer/SubViewport/CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_08365")
 
-[node name="Camera" type="Camera3D" parent="CharacterBody3D"]
+[node name="Camera" type="Camera3D" parent="SubViewportContainer/SubViewport/CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.490379, 0)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_v2wtc")
+[node name="edge_detection" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/CharacterBody3D/Camera"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.41614, -1.96209, 0)
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_d3p5r")
+skeleton = NodePath("../../../../..")
+surface_material_override/0 = SubResource("ShaderMaterial_n1pfm")
 
-[node name="PhysicsChainLong" parent="." instance=ExtResource("3_08365")]
-transform = Transform3D(0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, 0.258819, 5.17087, 10.1378, -6.11612)
+[node name="spawn_room" parent="SubViewportContainer/SubViewport" instance=ExtResource("6_b64ro")]
 
-[node name="PhysicsChainLong3" parent="." instance=ExtResource("3_08365")]
-transform = Transform3D(0.970279, 0, 0.24199, 0, 1, 0, -0.24199, 0, 0.970279, 4.62975, 10.1378, -6.11612)
+[node name="StaticBody3D" type="StaticBody3D" parent="SubViewportContainer/SubViewport/spawn_room"]
 
-[node name="PhysicsChainLong2" parent="." instance=ExtResource("3_08365")]
-transform = Transform3D(0.933503, 0.207726, -0.292272, 0.0573403, 0.718134, 0.693539, 0.353956, -0.664179, 0.658469, -0.359508, 7.46976, 4.74385)
-
-[node name="PhysicsChain" parent="." instance=ExtResource("4_v2wtc")]
-transform = Transform3D(0.00883292, 0.00643771, 0.99994, 0.999949, -0.0049296, -0.00880128, 0.00487264, 0.999967, -0.00648092, -2.94987, 9.9713, -6.11612)
-
-[node name="PhysicsChain2" parent="." instance=ExtResource("4_v2wtc")]
-transform = Transform3D(0.00883292, 0.0064377, 0.99994, 0.999949, -0.00492961, -0.00880126, 0.00487266, 0.999967, -0.00648092, 2.35691, 9.95717, 5.05597)
-
-[node name="PhysicsChain4" parent="." instance=ExtResource("4_v2wtc")]
-transform = Transform3D(-0.570054, 0, -0.821607, 0, 1, 0, 0.821607, 0, -0.570054, -6.27622, 9.95717, 5.2866)
-
-[node name="PinJoint3D2" type="PinJoint3D" parent="PhysicsChain4"]
-transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
-node_b = NodePath("../ChainLink32")
-
-[node name="PhysicsChain5" parent="." instance=ExtResource("4_v2wtc")]
-transform = Transform3D(-0.479366, 0, 0.877615, 0, 1, 0, -0.877615, 0, -0.479366, 2.12503, 10.0983, -11.3185)
-
-[node name="PinJoint3D2" type="PinJoint3D" parent="PhysicsChain5"]
-transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
-node_b = NodePath("../ChainLink32")
-
-[node name="PhysicsChain3" parent="." instance=ExtResource("5_80pwh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.24716, 0)
-
-[node name="PhysicsChainShort" parent="." instance=ExtResource("6_ovj5j")]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 2.84634, 9.87917, 5.30568)
-
-[node name="PhysicsChainShort2" parent="." instance=ExtResource("6_ovj5j")]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -11.049, 9.87917, 2.25253)
-
-[node name="PhysicsChainShort3" parent="." instance=ExtResource("6_ovj5j")]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 5.00909, 9.98797, -6.20986)
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.835846, -0.0253238, 0.54838, 0, -0.998936, -0.0461301, 0.548965, 0.0385577, -0.834956, 0, 0, 0)
-shadow_enabled = true
-shadow_blur = 5.442
-
-[node name="spawn_room" parent="." instance=ExtResource("6_b64ro")]
-
-[node name="StaticBody3D" type="StaticBody3D" parent="spawn_room"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="spawn_room/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewportContainer/SubViewport/spawn_room/StaticBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.555986, 0)
 shape = SubResource("BoxShape3D_w01yt")
 
-[editable path="PhysicsChain4"]
-[editable path="PhysicsChain5"]
+[node name="Objects" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="Chains" type="Node3D" parent="SubViewportContainer/SubViewport/Objects"]
+
+[node name="PhysicsChainLong" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("3_08365")]
+transform = Transform3D(0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, 0.258819, 5.17087, 10.1378, -6.11612)
+
+[node name="PhysicsChainLong3" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("3_08365")]
+transform = Transform3D(0.970279, 0, 0.24199, 0, 1, 0, -0.24199, 0, 0.970279, 4.62975, 10.1378, -6.11612)
+
+[node name="PhysicsChainLong2" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("3_08365")]
+transform = Transform3D(0.933503, 0.207726, -0.292272, 0.0573403, 0.718134, 0.693539, 0.353956, -0.664179, 0.658469, -0.359508, 7.46976, 4.74385)
+
+[node name="PhysicsChain" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("4_v2wtc")]
+transform = Transform3D(0.00883292, 0.00643771, 0.99994, 0.999949, -0.0049296, -0.00880128, 0.00487264, 0.999967, -0.00648092, -2.94987, 9.9713, -6.11612)
+
+[node name="PhysicsChain2" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("4_v2wtc")]
+transform = Transform3D(0.00883292, 0.0064377, 0.99994, 0.999949, -0.00492961, -0.00880126, 0.00487266, 0.999967, -0.00648092, 2.35691, 9.95717, 5.05597)
+
+[node name="PhysicsChain4" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("4_v2wtc")]
+transform = Transform3D(-0.570054, 0, -0.821607, 0, 1, 0, 0.821607, 0, -0.570054, -6.27622, 9.95717, 5.2866)
+
+[node name="PinJoint3D2" type="PinJoint3D" parent="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain4"]
+transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
+node_b = NodePath("../ChainLink32")
+
+[node name="PhysicsChain5" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("4_v2wtc")]
+transform = Transform3D(-0.479366, 0, 0.877615, 0, 1, 0, -0.877615, 0, -0.479366, 2.12503, 10.0983, -11.3185)
+
+[node name="PinJoint3D2" type="PinJoint3D" parent="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain5"]
+transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
+node_b = NodePath("../ChainLink32")
+
+[node name="PhysicsChain3" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("5_80pwh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.24716, 0)
+
+[node name="PhysicsChainShort" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 2.84634, 9.87917, 5.30568)
+
+[node name="PhysicsChainShort2" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -11.049, 9.87917, 2.25253)
+
+[node name="PhysicsChainShort3" parent="SubViewportContainer/SubViewport/Objects/Chains" instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 5.00909, 9.98797, -6.20986)
+
+[node name="kakelugn" parent="SubViewportContainer/SubViewport" instance=ExtResource("7_b64ro")]
+transform = Transform3D(-0.706366, 0, 0.707847, 0, 1, 0, -0.707847, 0, -0.706366, -14.0273, 0.574295, 14.32)
+
+[node name="Lights" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="Sconce" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.14952, 1.4806, 10.1841)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce2" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.0523, 3.42592, 9.27097)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce2" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce2/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce3" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.0523, 3.42592, -8.70587)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce3" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce3/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce4" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.929782, 1.6466, -10.4028)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce4" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce4/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce5" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 15.0282, 3.23245, -8.59719)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce5" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce5/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce6" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 15.0282, 3.23245, 9.36678)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce6" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce6/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce7" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.01533, 1.29827, 10.0403)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce7" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce7/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce8" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -1.01533, 1.29827, -10.2743)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce8" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce8/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce9" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8.74677, 3.27158, -15.2199)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce9" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce9/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce14" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9.79135, 1.42902, 0.950375)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce14" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce14/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce15" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10.238, 1.42902, 0.950375)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce15" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce15/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce16" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.26189, 3.30266, -15.1832)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce16" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce16/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce10" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8.74677, 3.27158, 15.2375)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce10" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce10/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce11" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -10.0247, 1.48051, -1.01263)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce11" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce11/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce12" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 10.285, 1.48051, -1.01263)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce12" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce12/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="Sconce13" parent="SubViewportContainer/SubViewport/Lights" instance=ExtResource("8_qsefr")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.33362, 3.33588, 15.2385)
+
+[node name="Fire" parent="SubViewportContainer/SubViewport/Lights/Sconce13" instance=ExtResource("9_d3p5r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.135489, 0.227197, -0.00939369)
+
+[node name="OmniLight3D" parent="SubViewportContainer/SubViewport/Lights/Sconce13/Fire" index="0"]
+light_color = Color(0.85098, 0.352941, 0, 1)
+light_energy = 1.95706
+light_specular = 2.772
+omni_range = 47.875
+omni_attenuation = 0.63
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/Lights"]
+transform = Transform3D(0.886414, -0.121046, 0.446787, 0, 0.965204, 0.261499, -0.462894, -0.231796, 0.85557, 0, 11.268, 0)
+light_color = Color(0.490868, 0.65374, 1, 1)
+light_energy = 0.128
+light_specular = 7.691
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport"]
+environment = ExtResource("2_d3p5r")
+
+[editable path="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain4"]
+[editable path="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain5"]
+[editable path="SubViewportContainer/SubViewport/kakelugn"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce2/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce3/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce4/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce5/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce6/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce7/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce8/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce9/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce14/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce15/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce16/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce10/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce11/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce12/Fire"]
+[editable path="SubViewportContainer/SubViewport/Lights/Sconce13/Fire"]
