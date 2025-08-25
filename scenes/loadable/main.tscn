@@ -1,9 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://cen1w8ilrr82j"]
+[gd_scene load_steps=18 format=3 uid="uid://cen1w8ilrr82j"]
 
 [ext_resource type="Environment" uid="uid://cyog4adx4j87x" path="res://assets/shaders/fire/level_environment_dark.tres" id="2_d3p5r"]
 [ext_resource type="Shader" uid="uid://cep7nbpwm6lqo" path="res://assets/shaders/edge_detection.gdshader" id="2_rnj7x"]
 [ext_resource type="Script" uid="uid://d2601umnwbk7v" path="res://scripts/player/player.gd" id="2_w01yt"]
 [ext_resource type="PackedScene" uid="uid://dieumyp8m6u8e" path="res://scenes/instantiable/objects/physics_chain_long.tscn" id="3_08365"]
+[ext_resource type="Shader" uid="uid://bl8qiisrhkmt8" path="res://assets/shaders/toon_shader.gdshader" id="4_n1pfm"]
 [ext_resource type="PackedScene" uid="uid://d1ckrg4f36nvi" path="res://scenes/instantiable/objects/physics_chain.tscn" id="4_v2wtc"]
 [ext_resource type="PackedScene" uid="uid://dgxrqiv345oa7" path="res://scenes/instantiable/objects/hanging_cage.tscn" id="5_80pwh"]
 [ext_resource type="PackedScene" uid="uid://dtnye732xql62" path="res://assets/models/levels/spawn_room.glb" id="6_b64ro"]
@@ -22,11 +23,30 @@ size = Vector2(2, 2)
 render_priority = 0
 shader = ExtResource("2_rnj7x")
 shader_parameter/lightIntensity = 1.25
-shader_parameter/lineAlpha = 0.7
+shader_parameter/lineAlpha = 0.175
 shader_parameter/useLighting = false
 shader_parameter/lineHighlight = 0.02
 shader_parameter/lineShadow = 0.55
-shader_parameter/minDepthThreshold = 0.001
+shader_parameter/minDepthThreshold = 1.056
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6t8kb"]
+render_priority = 0
+shader = ExtResource("4_n1pfm")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/cuts = 2
+shader_parameter/wrap = 9.5e-08
+shader_parameter/steepness = 5.507
+shader_parameter/use_attenuation = true
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 0.685
+shader_parameter/specular_shininess = 14.904
+shader_parameter/use_rim = false
+shader_parameter/rim_width = 8.658
+shader_parameter/rim_color = Color(1, 1, 1, 1)
+shader_parameter/use_ramp = false
+shader_parameter/use_borders = false
+shader_parameter/border_width = 0.045
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_w01yt"]
 size = Vector3(30.5986, 1, 30.5684)
@@ -41,10 +61,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
-stretch_shrink = 3
+stretch_shrink = 4
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
-size = Vector2i(640, 360)
+handle_input_locally = false
+size = Vector2i(480, 270)
+render_target_update_mode = 4
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.41614, 1.47171, 0)
@@ -67,6 +89,36 @@ skeleton = NodePath("../../../../..")
 surface_material_override/0 = SubResource("ShaderMaterial_n1pfm")
 
 [node name="spawn_room" parent="SubViewportContainer/SubViewport" instance=ExtResource("6_b64ro")]
+
+[node name="Walls" parent="SubViewportContainer/SubViewport/spawn_room" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="Arc" parent="SubViewportContainer/SubViewport/spawn_room" index="1"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="Cylinder" parent="SubViewportContainer/SubViewport/spawn_room" index="2"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="Cylinder_001" parent="SubViewportContainer/SubViewport/spawn_room" index="3"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes_004" parent="SubViewportContainer/SubViewport/spawn_room" index="4"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes_005" parent="SubViewportContainer/SubViewport/spawn_room" index="5"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes" parent="SubViewportContainer/SubViewport/spawn_room" index="6"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes_001" parent="SubViewportContainer/SubViewport/spawn_room" index="7"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes_002" parent="SubViewportContainer/SubViewport/spawn_room" index="8"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
+
+[node name="GeoNodesPipes_003" parent="SubViewportContainer/SubViewport/spawn_room" index="9"]
+surface_material_override/0 = SubResource("ShaderMaterial_6t8kb")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="SubViewportContainer/SubViewport/spawn_room"]
 
@@ -342,6 +394,7 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport"]
 environment = ExtResource("2_d3p5r")
 
+[editable path="SubViewportContainer/SubViewport/spawn_room"]
 [editable path="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain4"]
 [editable path="SubViewportContainer/SubViewport/Objects/Chains/PhysicsChain5"]
 [editable path="SubViewportContainer/SubViewport/kakelugn"]
