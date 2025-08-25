@@ -1,3 +1,103 @@
-[gd_scene format=3 uid="uid://cen1w8ilrr82j"]
+[gd_scene load_steps=11 format=3 uid="uid://cen1w8ilrr82j"]
 
-[node name="Node3D" type="Node3D"]
+[ext_resource type="Script" uid="uid://d2601umnwbk7v" path="res://scripts/player/player.gd" id="2_w01yt"]
+[ext_resource type="PackedScene" uid="uid://dieumyp8m6u8e" path="res://scenes/instantiable/objects/physics_chain_long.tscn" id="3_08365"]
+[ext_resource type="PackedScene" uid="uid://d1ckrg4f36nvi" path="res://scenes/instantiable/objects/physics_chain.tscn" id="4_v2wtc"]
+[ext_resource type="PackedScene" uid="uid://dgxrqiv345oa7" path="res://scenes/instantiable/objects/hanging_cage.tscn" id="5_80pwh"]
+[ext_resource type="PackedScene" uid="uid://dtnye732xql62" path="res://assets/models/levels/spawn_room.glb" id="6_b64ro"]
+[ext_resource type="PackedScene" uid="uid://bo38mbppayu7s" path="res://scenes/instantiable/objects/physics_chain_short.tscn" id="6_ovj5j"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_08365"]
+
+[sub_resource type="Sky" id="Sky_ovj5j"]
+
+[sub_resource type="Environment" id="Environment_v2wtc"]
+background_mode = 2
+sky = SubResource("Sky_ovj5j")
+ssr_enabled = true
+ssao_enabled = true
+ssil_radius = 1.83
+sdfgi_enabled = true
+sdfgi_bounce_feedback = 0.13
+fog_enabled = true
+fog_light_energy = 0.34
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.1102
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w01yt"]
+size = Vector3(30.5986, 1, 30.5684)
+
+[node name="World" type="Node3D"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.41614, 1.47171, 0)
+script = ExtResource("2_w01yt")
+velocity_drag = 0.1
+movement_speed = 100.0
+air_speed_control = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_08365")
+
+[node name="Camera" type="Camera3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.490379, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_v2wtc")
+
+[node name="PhysicsChainLong" parent="." instance=ExtResource("3_08365")]
+transform = Transform3D(0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, 0.258819, 5.17087, 10.1378, -6.11612)
+
+[node name="PhysicsChainLong3" parent="." instance=ExtResource("3_08365")]
+transform = Transform3D(0.970279, 0, 0.24199, 0, 1, 0, -0.24199, 0, 0.970279, 4.62975, 10.1378, -6.11612)
+
+[node name="PhysicsChainLong2" parent="." instance=ExtResource("3_08365")]
+transform = Transform3D(0.933503, 0.207726, -0.292272, 0.0573403, 0.718134, 0.693539, 0.353956, -0.664179, 0.658469, -0.359508, 7.46976, 4.74385)
+
+[node name="PhysicsChain" parent="." instance=ExtResource("4_v2wtc")]
+transform = Transform3D(0.00883292, 0.00643771, 0.99994, 0.999949, -0.0049296, -0.00880128, 0.00487264, 0.999967, -0.00648092, -2.94987, 9.9713, -6.11612)
+
+[node name="PhysicsChain2" parent="." instance=ExtResource("4_v2wtc")]
+transform = Transform3D(0.00883292, 0.0064377, 0.99994, 0.999949, -0.00492961, -0.00880126, 0.00487266, 0.999967, -0.00648092, 2.35691, 9.95717, 5.05597)
+
+[node name="PhysicsChain4" parent="." instance=ExtResource("4_v2wtc")]
+transform = Transform3D(-0.570054, 0, -0.821607, 0, 1, 0, 0.821607, 0, -0.570054, -6.27622, 9.95717, 5.2866)
+
+[node name="PinJoint3D2" type="PinJoint3D" parent="PhysicsChain4"]
+transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
+node_b = NodePath("../ChainLink32")
+
+[node name="PhysicsChain5" parent="." instance=ExtResource("4_v2wtc")]
+transform = Transform3D(-0.479366, 0, 0.877615, 0, 1, 0, -0.877615, 0, -0.479366, 2.12503, 10.0983, -11.3185)
+
+[node name="PinJoint3D2" type="PinJoint3D" parent="PhysicsChain5"]
+transform = Transform3D(1, 0, -1.81899e-11, 0, 1, 9.31323e-10, -2.18279e-11, 0, 1, -5.57899, 0.0284724, 0.0508337)
+node_b = NodePath("../ChainLink32")
+
+[node name="PhysicsChain3" parent="." instance=ExtResource("5_80pwh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.24716, 0)
+
+[node name="PhysicsChainShort" parent="." instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 2.84634, 9.87917, 5.30568)
+
+[node name="PhysicsChainShort2" parent="." instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -11.049, 9.87917, 2.25253)
+
+[node name="PhysicsChainShort3" parent="." instance=ExtResource("6_ovj5j")]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 5.00909, 9.98797, -6.20986)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.835846, -0.0253238, 0.54838, 0, -0.998936, -0.0461301, 0.548965, 0.0385577, -0.834956, 0, 0, 0)
+shadow_enabled = true
+shadow_blur = 5.442
+
+[node name="spawn_room" parent="." instance=ExtResource("6_b64ro")]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="spawn_room"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="spawn_room/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.555986, 0)
+shape = SubResource("BoxShape3D_w01yt")
+
+[editable path="PhysicsChain4"]
+[editable path="PhysicsChain5"]
