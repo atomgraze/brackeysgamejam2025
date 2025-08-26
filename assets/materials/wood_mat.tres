@@ -57,7 +57,7 @@ vec3 triplanar_sample(sampler2D tex, float scale) {
 	vec2 uv_x = world_pos.yz * scale;
 	vec2 uv_y = world_pos.xz * scale;
 	vec2 uv_z = world_pos.xy * scale;
-	
+
 	vec3 tex_x = texture(tex, uv_x).rgb;
 	vec3 tex_y = texture(tex, uv_y).rgb;
 	vec3 tex_z = texture(tex, uv_z).rgb;
@@ -73,7 +73,7 @@ float triplanar_sample_single(sampler2D tex, float scale) {
 	vec2 uv_x = world_pos.yz * scale;
 	vec2 uv_y = world_pos.xz * scale;
 	vec2 uv_z = world_pos.xy * scale;
-	
+
 	float tex_x = texture(tex, uv_x).r;
 	float tex_y = texture(tex, uv_y).r;
 	float tex_z = texture(tex, uv_z).r;
@@ -89,7 +89,7 @@ void vertex() {
 void fragment() {
 	vec3 albedo_tex;
 	float ao_value = 1.0; // Default to 1.0 (no occlusion)
-	
+
 	if (use_triplanar) {
 		albedo_tex = triplanar_sample(albedo_texture, triplanar_scale);
 		if (use_ambient_occlusion) {
@@ -101,7 +101,7 @@ void fragment() {
 			ao_value = texture(ambient_occlusion_map, UV).r;
 		}
 	}
-	
+
 	// Apply the albedo texture and the ambient occlusion directly to the final ALBEDO
 	ALBEDO = albedo.rgb * albedo_tex * ao_value;
 	NORMAL = normalize(NORMAL);
@@ -109,12 +109,12 @@ void fragment() {
 
 void light() {
 	vec3 normal = normalize(NORMAL);
-	
+
 	float attenuation = 1.0;
 	if (use_attenuation) {
 		attenuation = ATTENUATION;
 	}
-	
+
 	float NdotL = dot(normal, LIGHT);
 	float diffuse_amount = NdotL + (attenuation - 1.0) + wrap;
 	diffuse_amount *= steepness;
@@ -127,7 +127,7 @@ void light() {
 		border = step(diffuse_stepped - corr_border_width, diffuse_amount)
 				 - step(1.0 - corr_border_width, diffuse_amount);
 	}
-	
+
 	// Note: We no longer multiply by ao_value here
 	vec3 diffuse = ALBEDO.rgb * LIGHT_COLOR;
 	if (use_ramp) {
@@ -135,31 +135,31 @@ void light() {
 	} else {
 		diffuse *= diffuse_stepped * (1.0 - border);
 	}
-	
+
 	if (clamp_diffuse_to_max) {
 		DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, diffuse);
 	} else {
 		DIFFUSE_LIGHT += diffuse;
 	}
-	
+
 	if (use_specular) {
 		vec3 H = normalize(LIGHT + VIEW);
 		float NdotH = dot(normal, H);
-		
+
 		float specular_value;
 		if (use_triplanar) {
 			specular_value = triplanar_sample_single(specular_map, triplanar_scale);
 		} else {
 			specular_value = texture(specular_map, UV).r;
 		}
-		
+
 		float specular_amount = max(pow(NdotH, specular_shininess*specular_shininess), 0.0)
 							    * specular_value
 								* attenuation;
 		specular_amount = split_specular(specular_amount);
 		SPECULAR_LIGHT += specular_strength * specular_amount * LIGHT_COLOR;
 	}
-	
+
 	if (use_rim) {
 		float NdotV = dot(normal, VIEW);
 		float rim_light = pow(1.0 - NdotV, rim_width);
