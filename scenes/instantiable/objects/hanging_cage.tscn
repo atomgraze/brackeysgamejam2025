@@ -1,4 +1,7 @@
-[gd_scene load_steps=25 format=4 uid="uid://dgxrqiv345oa7"]
+[gd_scene load_steps=27 format=4 uid="uid://dgxrqiv345oa7"]
+
+[ext_resource type="Material" uid="uid://ck03gpfly2wj1" path="res://assets/materials/chain_mat.tres" id="1_df67w"]
+[ext_resource type="Material" uid="uid://bpm56rj1xt1y5" path="res://assets/materials/metal_mat.tres" id="1_x12rw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8q3bv"]
 
@@ -1379,31 +1382,37 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0259771, -3.02823, 0.00357
 [node name="Hanging Cage" type="MeshInstance3D" parent="hanging_cage"]
 mesh = SubResource("ArrayMesh_d2akp")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_x12rw")
 
 [node name="Cage" type="MeshInstance3D" parent="hanging_cage"]
 transform = Transform3D(0.578168, 0, 0, 0, 0.578168, 0, 0, 0, 0.578168, 0, -0.137442, 0)
 mesh = SubResource("ArrayMesh_iiccx")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_x12rw")
 
 [node name="Chain_001" type="MeshInstance3D" parent="hanging_cage"]
 transform = Transform3D(0.3532, -0.129789, 0.479703, 0.217833, 0.569402, -0.00633029, -0.446664, 0.175061, 0.376238, 0.461331, 1.54346, -0.461429)
 mesh = SubResource("ArrayMesh_q1otq")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_df67w")
 
 [node name="Chain_002" type="MeshInstance3D" parent="hanging_cage"]
 transform = Transform3D(-0.416636, 0.181204, 0.406558, 0.24316, 0.559091, 8.3311e-09, -0.372823, 0.162148, -0.454335, -0.464481, 1.54346, -0.456635)
 mesh = SubResource("ArrayMesh_bpm2r")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_df67w")
 
 [node name="Chain_003" type="MeshInstance3D" parent="hanging_cage"]
 transform = Transform3D(-0.352586, 0.118654, -0.483026, 0.21232, 0.571328, -0.0146387, 0.449792, -0.176678, -0.371728, -0.442282, 1.52019, 0.45566)
 mesh = SubResource("ArrayMesh_s7oce")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_df67w")
 
 [node name="Chain_004" type="MeshInstance3D" parent="hanging_cage"]
 transform = Transform3D(0.363433, -0.158065, -0.463294, 0.24316, 0.559091, 3.04019e-08, 0.424852, -0.184777, 0.396318, 0.457681, 1.54346, 0.461572)
 mesh = SubResource("ArrayMesh_28pdi")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_df67w")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="hanging_cage"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.936023, 0)

@@ -1,4 +1,7 @@
-[gd_scene load_steps=6 format=4 uid="uid://dieumyp8m6u8e"]
+[gd_scene load_steps=8 format=4 uid="uid://dieumyp8m6u8e"]
+
+[ext_resource type="Material" uid="uid://ck03gpfly2wj1" path="res://assets/materials/chain_mat.tres" id="1_5t3d6"]
+[ext_resource type="Script" uid="uid://pfg8fik1n5mp" path="res://scripts/visuals/shader_to_chains.gd" id="1_wsxdp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8q3bv"]
 
@@ -41,6 +44,8 @@ size = Vector3(0.226563, 0.0913086, 0.0654297)
 size = Vector3(0.109329, 0.0791016, 0.0546875)
 
 [node name="PhysicsChainLong" type="Node3D"]
+script = ExtResource("1_wsxdp")
+chain_shader_material = ExtResource("1_5t3d6")
 
 [node name="ChainLink" type="RigidBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0198478, 0, 0)
@@ -52,6 +57,7 @@ gravity_scale = 0.4
 [node name="Chain_013" type="MeshInstance3D" parent="ChainLink"]
 mesh = SubResource("ArrayMesh_x04tv")
 skeleton = NodePath("")
+surface_material_override/0 = ExtResource("1_5t3d6")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ChainLink"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00268555, 0.0871607)
